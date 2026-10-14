@@ -1,6 +1,3 @@
-
-from unittest import result
-
 from flask import Flask, render_template, request
 from tls_check import check_tls_certificate
 from urllib.parse import urlparse
