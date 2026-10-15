@@ -1,0 +1,287 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account | WebShield</title>
+
+    <style>
+        :root {
+            --bg: #071321;
+            --panel: #0c1b2d;
+            --border: #203e5d;
+            --text: #edf5ff;
+            --muted: #a8bbd3;
+            --green: #34d399;
+            --red: #fb7185;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            padding: 32px 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(
+                ellipse at top,
+                #10243b,
+                var(--bg) 70%
+            );
+            color: var(--text);
+            font-family: Inter, system-ui, Arial, sans-serif;
+        }
+
+        .register-card {
+            width: 100%;
+            max-width: 460px;
+            padding: 36px;
+            background: rgba(12, 27, 45, 0.96);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.28);
+        }
+
+        .brand {
+            margin: 0;
+            text-align: center;
+            font-size: 34px;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .brand span {
+            color: var(--green);
+        }
+
+        .tagline {
+            margin: 8px 0 28px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .card-heading {
+            margin-bottom: 24px;
+        }
+
+        .card-heading h2 {
+            margin: 0 0 8px;
+            font-size: 23px;
+        }
+
+        .card-heading p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .field {
+            margin-bottom: 19px;
+        }
+
+        .field label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .field input {
+            display: block;
+            width: 100%;
+            padding: 13px 14px;
+            border: 1px solid #355779;
+            border-radius: 9px;
+            background: #071321;
+            color: var(--text);
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .field input:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.10);
+        }
+
+        .field input::placeholder {
+            color: #71869e;
+        }
+
+        .help-text {
+            margin-top: 8px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .help-text ul {
+            margin: 7px 0 0;
+            padding-left: 18px;
+        }
+
+        .help-text li {
+            margin-bottom: 3px;
+        }
+
+        .error-list,
+        .field ul.errorlist {
+            margin: 8px 0 0;
+            padding-left: 18px;
+            color: var(--red);
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .error-list {
+            margin-bottom: 18px;
+        }
+
+        .register-button {
+            width: 100%;
+            margin-top: 5px;
+            padding: 14px;
+            border: none;
+            border-radius: 9px;
+            background: var(--green);
+            color: #052e26;
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: transform 0.2s, filter 0.2s;
+        }
+
+        .register-button:hover {
+            filter: brightness(1.08);
+            transform: translateY(-1px);
+        }
+
+        .register-button:focus-visible,
+        a:focus-visible {
+            outline: 2px solid white;
+            outline-offset: 3px;
+        }
+
+        .divider {
+            height: 1px;
+            margin: 24px 0 18px;
+            background: var(--border);
+        }
+
+        .login-text {
+            margin: 0;
+            text-align: center;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        a {
+            color: var(--green);
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .back-link {
+            display: block;
+            margin-top: 20px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        @media (max-width: 480px) {
+            .register-card {
+                padding: 25px 20px;
+            }
+
+            .brand {
+                font-size: 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="register-card">
+        <h1 class="brand"><span>Web</span>Shield</h1>
+        <p class="tagline">Website Security Audit Platform</p>
+
+        <div class="card-heading">
+            <h2>Create your account</h2>
+            <p>Get started with website security auditing.</p>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="error-list">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <div class="field">
+                <label for="{{ form.username.id_for_label }}">Username</label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                    <div class="error-list">{{ form.username.errors }}</div>
+                {% endif %}
+                
+            </div>
+
+            <div class="field">
+                <label for="{{ form.password1.id_for_label }}">Password</label>
+                {{ form.password1 }}
+            
+                {% if form.password1.errors %}
+                    <div class="error-list">{{ form.password1.errors }}</div>
+                {% endif %}
+            
+                <div class="help-text">
+                    Password must:
+                    <ul>
+                        <li>Contain at least 8 characters</li>
+                        <li>Not be too similar to your personal information</li>
+                        <li>Not be a commonly used password</li>
+                        <li>Not consist entirely of numbers</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="{{ form.password2.id_for_label }}">Confirm password</label>
+                {{ form.password2 }}
+                {% if form.password2.errors %}
+                    <div class="error-list">{{ form.password2.errors }}</div>
+                {% endif %}
+            </div>
+
+            <button class="register-button" type="submit">
+                Create Account →
+            </button>
+        </form>
+
+        <div class="divider"></div>
+
+        <p class="login-text">
+            Already have an account?
+            <a href="{% url 'login' %}">Sign in</a>
+        </p>
+
+        <a class="back-link" href="{% url 'login' %}">
+            ← Back to Login
+        </a>
+    </main>
+</body>
+</html>

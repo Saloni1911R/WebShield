@@ -8,3 +8,7 @@ instance/
 # Local backup copies
 *_backup.py
 *_backup.html
+# Virtual environment
+.venv/
+# Django
+db.sqlite3

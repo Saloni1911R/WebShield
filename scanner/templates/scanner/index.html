@@ -1,0 +1,388 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebShield | Website Security Audit</title>
+    <style>
+        :root {
+            --bg: #071321;
+            --panel: #0c1b2d;
+            --card: #10243a;
+            --border: #203e5d;
+            --text: #edf5ff;
+            --muted: #a8bbd3;
+            --green: #34d399;
+            --yellow: #fbbf24;
+            --red: #fb7185;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 36px 20px;
+            background: radial-gradient(ellipse at top, #10243b, var(--bg) 65%);
+            color: var(--text);
+            font-family: Inter, system-ui, Arial, sans-serif;
+        }
+
+        main { max-width: 1100px; margin: auto; }
+
+        .hero { text-align: center; padding: 12px 0 34px; }
+
+        .brand {
+            color: var(--green);
+            font-size: clamp(34px, 5vw, 48px);
+            font-weight: 800;
+            letter-spacing: -1.5px;
+            margin: 0;
+        }
+
+        .brand span { color: var(--text); }
+
+        .subtitle { font-size: 20px; font-weight: 600; }
+        p { color: var(--muted); line-height: 1.65; }
+        .intro { max-width: 600px; margin: auto; }
+
+        
+        .hero form {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            max-width: 900px;
+            margin: 26px auto 0;
+            align-items: stretch;
+        }
+
+        .hero form > div {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .hero form input {
+            display: block;
+            width: 100%;
+            min-width: 0;
+            padding: 17px 18px;
+            font-size: 16px;
+        }
+
+        .hero form button {
+            flex-shrink: 0;
+        }
+
+
+        input {
+            min-width: 0;
+            flex: 1;
+            padding: 15px;
+            border: 1px solid #355779;
+            border-radius: 10px;
+            background: var(--panel);
+            color: white;
+            font-size: 16px;
+        }
+
+        input:focus {
+            outline: 2px solid var(--green);
+            outline-offset: 2px;
+        }
+
+        button {
+            padding: 14px 22px;
+            border: 0;
+            border-radius: 10px;
+            background: var(--green);
+            color: #052e26;
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        button:hover { filter: brightness(1.08); }
+        button:focus-visible { outline: 2px solid white; outline-offset: 3px; }
+
+        .panel {
+            border: 1px solid var(--border);
+            background: rgba(8, 24, 41, .86);
+            border-radius: 15px;
+            padding: 24px;
+            margin-bottom: 22px;
+        }
+
+        h2 { font-size: 22px; margin: 0 0 20px; }
+        h3 { font-size: 16px; margin: 0 0 8px; }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+
+        .summary-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 18px;
+        }
+
+        .summary-card p {
+            margin: 6px 0 0;
+            font-size: 32px;
+            font-weight: 800;
+        }
+
+        .passed { color: var(--green); }
+        .warning { color: var(--yellow); }
+        .error { color: var(--red); }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.5fr) minmax(260px, 1fr);
+            gap: 20px;
+        }
+
+        .finding {
+            padding: 16px;
+            margin: 12px 0;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--panel);
+        }
+
+        .finding p { margin: 6px 0 0; }
+        .finding .recommendation { color: var(--yellow); }
+
+        .status {
+            display: inline-block;
+            margin-left: 8px;
+            padding: 3px 9px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 800;
+            background: #173a37;
+            color: var(--green);
+        }
+
+        .status-warning { background: #443516; color: var(--yellow); }
+        .status-error { background: #49232d; color: var(--red); }
+
+        .tls-details {
+            padding: 18px;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow-wrap: anywhere;
+        }
+
+        .tls-details p { margin: 10px 0; }
+        .http-status { margin-top: -10px; }
+
+        .alert {
+            border: 1px solid #75404a;
+            background: #291923;
+            padding: 16px;
+            border-radius: 10px;
+            overflow-wrap: anywhere;
+        }
+
+        .note { text-align: center; font-size: 13px; margin: 25px 0 5px; }
+
+        @media (max-width: 720px) {
+            .results-grid { grid-template-columns: 1fr; }
+            form { flex-direction: column; }
+            form button { width: 100%; }
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 22px 12px; }
+            .panel { padding: 16px; }
+            .summary-grid { gap: 8px; }
+            .summary-card { padding: 11px; }
+            .summary-card h3 { font-size: 13px; }
+            .summary-card p { font-size: 26px; }
+        }
+	.top-nav {
+    	display: flex;
+    	justify-content: flex-end;
+    	align-items: center;
+    	gap: 16px;
+    	max-width: 1100px;
+    	margin: 0 auto 20px;
+	}
+
+	.top-nav a {
+    	color: var(--green);
+    	text-decoration: none;
+    	font-weight: 700;
+	}
+
+	.top-nav .nav-form {
+    	display: inline;
+    	margin: 0;
+	}
+
+	.top-nav button {
+    	padding: 9px 16px;
+	}
+
+    .user-badge {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 16px;
+        background: rgba(52, 211, 153, 0.08);
+        border: 1px solid rgba(52, 211, 153, 0.25);
+        border-radius: 12px;
+        color: var(--muted);
+        font-size: 14px;
+    }
+    
+    .user-icon {
+        font-size: 17px;
+    }
+    
+    .welcome-text {
+        color: var(--muted);
+    }
+    
+    .username {
+        color: var(--green);
+        font-weight: 800;
+        letter-spacing: 0.3px;
+    }
+    
+    </style>
+</head>
+<body>
+<main>
+	<nav class="top-nav">
+        {% if user.is_authenticated %}
+            
+            <div class="user-badge">
+                <span class="user-icon">👤</span>
+                <span class="welcome-text">Welcome,</span>
+                <strong class="username">{{ user.username }}</strong>
+            </div>
+
+            <form method="post" action="{% url 'logout' %}" class="nav-form">
+                {% csrf_token %}
+                <button type="submit">Logout</button>
+            </form>
+        {% else %}
+            <a href="{% url 'login' %}">Login</a>
+            <a href="{% url 'register' %}">Register</a>
+        {% endif %}
+    </nav>
+    <header class="hero">
+        <h1 class="brand"><span>Web</span>Shield</h1>
+        <p class="subtitle">Website Security Audit Platform</p>
+        <p class="intro">
+            Check HTTPS, TLS certificates, and HTTP security headers
+            to identify potential security misconfigurations.
+        </p>
+	<form method="POST">
+    		{% csrf_token %}
+
+    		<div>
+        		{{ form.url }}
+        		{{ form.url.errors }}
+        		{{ form.non_field_errors }}
+    		</div>
+
+    		<button type="submit">Scan Website →</button>
+	</form>
+    </header>
+
+    {% if result %}
+        {% if result.error %}
+            <div class="alert" role="alert">
+                <h2>Scan could not be completed</h2>
+                <p>{{ result.error }}</p>
+            </div>
+        {% else %}
+            <section class="panel">
+                {% if result.summary %}
+                    <h2>Security Summary</h2>
+                    <div class="summary-grid">
+                        <div class="summary-card">
+                            <h3 class="passed">Passed</h3>
+                            <p class="passed">{{ result.summary.passed }}</p>
+                        </div>
+                        <div class="summary-card">
+                            <h3 class="warning">Warnings</h3>
+                            <p class="warning">{{ result.summary.warnings }}</p>
+                        </div>
+                        <div class="summary-card">
+                            <h3 class="error">Errors</h3>
+                            <p class="error">{{ result.summary.errors }}</p>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="results-grid">
+                    <section>
+                        <h2>HTTP Security Headers</h2>
+                        <p class="http-status">
+                            HTTP response status:
+                            <strong>{{ result.status_code }}</strong>
+                        </p>
+
+                        {% for finding in result.findings %}
+                            <article class="finding">
+                                <h3>
+                                    {{ finding.name }}
+                                    <span class="status
+                                        {% if finding.status == 'Warning' %}status-warning{% endif %}
+                                        {% if finding.status == 'Error' %}status-error{% endif %}">
+                                        {{ finding.status }}
+                                    </span>
+                                </h3>
+                                <p>{{ finding.explanation }}</p>
+                                {% if not finding.present %}
+                                    <p class="recommendation">
+                                        Recommendation: {{ finding.recommendation }}
+                                    </p>
+                                {% endif %}
+                            </article>
+                        {% endfor %}
+                    </section>
+
+                    <section>
+                        <h2>TLS Certificate</h2>
+                        {% if result.tls %}
+                            <div class="tls-details">
+                                <h3>
+                                    Status:
+                                    <span class="{% if result.tls.status == 'Valid' %}passed{% else %}warning{% endif %}">
+                                        {{ result.tls.status }}
+                                    </span>
+                                </h3>
+                                <p>{{ result.tls.message }}</p>
+
+                                {% if result.tls.status == "Valid" %}
+                                    <p><strong>Hostname</strong><br>{{ result.tls.hostname }}</p>
+                                    <p><strong>Certificate issuer</strong><br>{{ result.tls.issuer }}</p>
+                                    <p><strong>Expires</strong><br>{{ result.tls.expires }}</p>
+                                    <p><strong>Days remaining</strong><br>{{ result.tls.days_left }}</p>
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            <p>TLS certificate information is unavailable.</p>
+                        {% endif %}
+                    </section>
+                </div>
+            </section>
+        {% endif %}
+    {% endif %}
+
+    <footer class="note">
+        Security audit results are limited to the checks implemented in WebShield.
+        Only scan websites you own or have permission to assess.
+    </footer>
+</main>
+</body>
+</html>
